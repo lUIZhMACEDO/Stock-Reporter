@@ -11,8 +11,11 @@ TRADE_IDEA_COUNT = int(os.getenv("TRADE_IDEA_COUNT", "5"))
 
 
 def get_sp500_tickers() -> list[str]:
-    """Fetch S&P 500 symbols from Wikipedia."""
-    tables = pd.read_html(SP500_WIKI_URL)
+    """Fetch S&P 500 symbols from Wikipedia with a User-Agent header."""
+    import requests
+    headers = {'User-Agent': 'Mozilla/5.0'}
+    response = requests.get(SP500_WIKI_URL, headers=headers)
+    tables = pd.read_html(response.text)
     df = tables[0]
     return [symbol.replace(".", "-") for symbol in df["Symbol"].tolist()]
 
